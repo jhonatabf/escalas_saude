@@ -1,5 +1,13 @@
+import 'dart:convert';
+import 'dart:io' as prefix1;
+import 'dart:io';
+
+import 'package:escalas_saude/cadastros/pacientes.dart';
+import 'package:escalas_saude/escalas/braden.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import './escalas/braden.dart';
+import 'package:path_provider/path_provider.dart';
 
 String tituloApp = "Minhas escalas";
 String sloganApp = "Sua solução para verificar a condição do paciente";
@@ -11,7 +19,12 @@ final subtitulosEscalas = [
   'National Early Warning Score'
 ];
 int _selectedIndex = 0;
-const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+String tituloPagina = "Minhas Escalas";
+List _toDolist = ['Jhonata', 'Maria'];
+List _toDolistHosp = ['São Domingos', 'UDI Hospital'];
+
+const TextStyle optionStyle =
+    TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 const List<Widget> _widgetOptions = <Widget>[
   Text(
     'Index 0: Escalas',
@@ -64,7 +77,7 @@ class _HomeState extends State<Home> {
           color: Colors.grey[700],
         ),
       ),
-      body: base(),
+      body: paginas(_selectedIndex),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -115,7 +128,6 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -134,9 +146,43 @@ class _HomeState extends State<Home> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.green,
         unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+            switch (_selectedIndex) {
+              case 0:
+                tituloPagina = "Minhas Escalas";
+                paginas(_selectedIndex);
+                break;
+              case 1:
+                tituloPagina = "Meus Hospitias";
+                paginas(_selectedIndex);
+                break;
+              case 2:
+                tituloPagina = "Meus Pacientes";
+                paginas(_selectedIndex);
+                break;
+            }
+          });
+        },
       ),
     );
+  }
+
+  Widget paginas(index) {
+    Widget home;
+    switch (index) {
+      case 0:
+        home = base();
+        break;
+      case 1:
+        home = hospital();
+        break;
+      case 2:
+        home = paciente();
+        break;
+    }
+    return home;
   }
 
   Widget base() {
@@ -146,16 +192,8 @@ class _HomeState extends State<Home> {
           alignment: Alignment.topLeft,
           padding: const EdgeInsets.fromLTRB(14, 20, 12, 5),
           child: Text(
-            "ESCALAS DISPONÍVEIS",
+            tituloPagina,
             style: TextStyle(color: Colors.grey[600]),
-          ),
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                width: 1.0,
-                color: Color(0xFFFFDDDDDD),
-              ),
-            ),
           ),
         ),
         Expanded(
@@ -165,16 +203,22 @@ class _HomeState extends State<Home> {
             itemBuilder: (context, index) {
               int item = index;
               return Container(
-                decoration: const BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      width: 1.0,
-                      color: Color(0xFFFFDDDDDD),
-                    ),
-                  ),
-                ),
+//                decoration: const BoxDecoration(
+//                  border: Border(
+//                    bottom: BorderSide(
+//                      width: 1.0,
+//                      color: Color(0xFFFFDDDDDD),
+//                    ),
+//                  ),
+//                ),
                 child: ListTile(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Braden(title: 'Escala Braden')),
+                    );
+                  },
                   leading: Icon(
                     Icons.content_copy,
                     color: coresincone[index],
@@ -194,8 +238,222 @@ class _HomeState extends State<Home> {
           ),
         ),
       ],
+    );
+  }
 
+  Widget hospital() {
+    return Column(
+      children: <Widget>[
+        Container(
+          alignment: Alignment.topLeft,
+          padding: const EdgeInsets.fromLTRB(14, 20, 12, 5),
+          child: Text(
+            "Cadastrar novo hospital",
+            style: TextStyle(color: Colors.grey[600]),
+          ),
+        ),
+        Container(
+          alignment: Alignment.topLeft,
+          padding: const EdgeInsets.fromLTRB(14, 20, 12, 5),
+          child: TextField(
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Nome',
+              focusColor: Colors.green,
+            ),
+          ),
+        ),
+        Container(
+          alignment: Alignment.topLeft,
+          padding: const EdgeInsets.fromLTRB(14, 20, 12, 5),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(""),
+              ),
+              RaisedButton(
+                color: Colors.green,
+                elevation: 0,
+                child: Text("Salvar", style: TextStyle(color: Colors.white)),
+                onPressed: () {
+                  //novoPaciente();
+                },
+              )
+            ],
+          ),
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                width: 1.0,
+                color: Color(0xFFFFDDDDDD),
+              ),
+            ),
+          ),
+        ),
+        Container(
+          alignment: Alignment.topLeft,
+          padding: const EdgeInsets.fromLTRB(14, 20, 12, 5),
+          child: Text(
+            "Meus Hospitais",
+            style: TextStyle(color: Colors.grey[600]),
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: _toDolist.length,
+            itemBuilder: (context, index) {
+              int item = index;
+              return Container(
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.green,
+                    child: Text(
+                      _toDolist[index].substring(0, 2),
+                      style: TextStyle(fontSize: 20.0, color: Colors.white),
+                    ),
+                  ),
+                  title: Text(_toDolist[index].toString(),
+                      style: TextStyle(
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.bold)),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget paciente() {
+    return Column(
+      children: <Widget>[
+        Container(
+          alignment: Alignment.topLeft,
+          padding: const EdgeInsets.fromLTRB(14, 20, 12, 5),
+          child: Text(
+            "Cadastrar novo paciente",
+            style: TextStyle(color: Colors.grey[600]),
+          ),
+        ),
+        Container(
+          alignment: Alignment.topLeft,
+          padding: const EdgeInsets.fromLTRB(14, 20, 12, 5),
+          child: TextField(
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Nome',
+              focusColor: Colors.green,
+            ),
+          ),
+        ),
+        Container(
+          alignment: Alignment.topLeft,
+          padding: const EdgeInsets.fromLTRB(14, 20, 12, 5),
+          child: TextField(
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.green,
+                ),
+              ),
+              labelText: 'Meus Hospital',
+            ),
+          ),
+        ),
+        Container(
+          alignment: Alignment.topLeft,
+          padding: const EdgeInsets.fromLTRB(14, 20, 12, 5),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(""),
+              ),
+              RaisedButton(
+                color: Colors.green,
+                elevation: 0,
+                child: Text("Salvar", style: TextStyle(color: Colors.white)),
+                onPressed: () {
+                  //novoPaciente();
+                },
+              )
+            ],
+          ),
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                width: 1.0,
+                color: Color(0xFFFFDDDDDD),
+              ),
+            ),
+          ),
+        ),
+        Container(
+          alignment: Alignment.topLeft,
+          padding: const EdgeInsets.fromLTRB(14, 20, 12, 5),
+          child: Text(
+            "Meus Pacientes",
+            style: TextStyle(color: Colors.grey[600]),
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: _toDolist.length,
+            itemBuilder: (context, index) {
+              int item = index;
+              return Container(
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.green,
+                    child: Text(
+                      _toDolist[index].substring(0, 2),
+                      style: TextStyle(fontSize: 20.0, color: Colors.white),
+                    ),
+                  ),
+                  title: Text(_toDolist[index].toString(),
+                      style: TextStyle(
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.bold)),
+                  subtitle: Text(
+                    _toDolistHosp[index].toString(),
+                    style: TextStyle(color: Colors.grey[500]),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<File> _getFile(banco) async {
+    final diretorioDb = await getApplicationDocumentsDirectory();
+    return File("${diretorioDb}" + banco + ".json");
+  }
+
+  Future<File> _saveData(banco) async {
+    String data = json.encode(_toDolist);
+    final file = await _getFile(banco);
+    return file.writeAsString(data);
+  }
+
+  Future<String> _readData(banco) async {
+    try {
+      final file = await _getFile(banco);
+      return file.readAsString();
+    } catch (e) {
+      return null;
+    }
+  }
+
+  void novoPaciente() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => Pacientes(title: 'Cadastro de paciente')),
     );
   }
 }
-

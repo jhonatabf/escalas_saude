@@ -1,0 +1,4 @@
+com.jhonatareboucas.escalas_saude
+drawable launch_background
+mipmap ic_launcher
+style LaunchTheme
