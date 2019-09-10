@@ -1,5 +1,5 @@
 #Internal package file, do not edit.
-#Sat Sep 07 12:18:43 BRT 2019
+#Tue Sep 10 00:24:24 BRT 2019
 4.path=flutter_assets/vm_snapshot_data
 8.set=ASSET
 6.path=flutter_assets/LICENSE

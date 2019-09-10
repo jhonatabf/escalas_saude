@@ -20,8 +20,6 @@ final subtitulosEscalas = [
 ];
 int _selectedIndex = 0;
 String tituloPagina = "Minhas Escalas";
-List _toDolist = ['Jhonata', 'Maria'];
-List _toDolistHosp = ['São Domingos', 'UDI Hospital'];
 
 const TextStyle optionStyle =
     TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
@@ -60,6 +58,19 @@ class _HomeState extends State<Home> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  final _pacienteController = TextEditingController();
+  List _pacienteList = [];
+
+  void _addPaciente(){
+    setState((){
+      Map<String, dynamic> newPaciente = Map();
+      newPaciente["title"] = _pacienteController.text;
+      _pacienteController.text = "";
+      newPaciente["data"] = "Cadastrado em: " + new DateTime.now().toString();
+      _pacienteList.add(newPaciente);
     });
   }
 
@@ -135,10 +146,6 @@ class _HomeState extends State<Home> {
             title: Text('Escalas'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            title: Text('Hospitais'),
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.perm_contact_calendar),
             title: Text('Pacientes'),
           ),
@@ -155,10 +162,6 @@ class _HomeState extends State<Home> {
                 paginas(_selectedIndex);
                 break;
               case 1:
-                tituloPagina = "Meus Hospitias";
-                paginas(_selectedIndex);
-                break;
-              case 2:
                 tituloPagina = "Meus Pacientes";
                 paginas(_selectedIndex);
                 break;
@@ -176,9 +179,6 @@ class _HomeState extends State<Home> {
         home = base();
         break;
       case 1:
-        home = hospital();
-        break;
-      case 2:
         home = paciente();
         break;
     }
@@ -241,91 +241,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget hospital() {
-    return Column(
-      children: <Widget>[
-        Container(
-          alignment: Alignment.topLeft,
-          padding: const EdgeInsets.fromLTRB(14, 20, 12, 5),
-          child: Text(
-            "Cadastrar novo hospital",
-            style: TextStyle(color: Colors.grey[600]),
-          ),
-        ),
-        Container(
-          alignment: Alignment.topLeft,
-          padding: const EdgeInsets.fromLTRB(14, 20, 12, 5),
-          child: TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Nome',
-              focusColor: Colors.green,
-            ),
-          ),
-        ),
-        Container(
-          alignment: Alignment.topLeft,
-          padding: const EdgeInsets.fromLTRB(14, 20, 12, 5),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: Text(""),
-              ),
-              RaisedButton(
-                color: Colors.green,
-                elevation: 0,
-                child: Text("Salvar", style: TextStyle(color: Colors.white)),
-                onPressed: () {
-                  //novoPaciente();
-                },
-              )
-            ],
-          ),
-          decoration: const BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                width: 1.0,
-                color: Color(0xFFFFDDDDDD),
-              ),
-            ),
-          ),
-        ),
-        Container(
-          alignment: Alignment.topLeft,
-          padding: const EdgeInsets.fromLTRB(14, 20, 12, 5),
-          child: Text(
-            "Meus Hospitais",
-            style: TextStyle(color: Colors.grey[600]),
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: _toDolist.length,
-            itemBuilder: (context, index) {
-              int item = index;
-              return Container(
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.green,
-                    child: Text(
-                      _toDolist[index].substring(0, 2),
-                      style: TextStyle(fontSize: 20.0, color: Colors.white),
-                    ),
-                  ),
-                  title: Text(_toDolist[index].toString(),
-                      style: TextStyle(
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.bold)),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget paciente() {
     return Column(
       children: <Widget>[
@@ -340,44 +255,33 @@ class _HomeState extends State<Home> {
         Container(
           alignment: Alignment.topLeft,
           padding: const EdgeInsets.fromLTRB(14, 20, 12, 5),
-          child: TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Nome',
-              focusColor: Colors.green,
-            ),
-          ),
-        ),
-        Container(
-          alignment: Alignment.topLeft,
-          padding: const EdgeInsets.fromLTRB(14, 20, 12, 5),
-          child: TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Colors.green,
-                ),
-              ),
-              labelText: 'Meus Hospital',
-            ),
-          ),
-        ),
-        Container(
-          alignment: Alignment.topLeft,
-          padding: const EdgeInsets.fromLTRB(14, 20, 12, 5),
           child: Row(
             children: <Widget>[
               Expanded(
-                child: Text(""),
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 10, 5),
+                  margin: const EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
+                  height: 50,
+                  child: TextField(
+                    controller: _pacienteController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Nome',
+                    focusColor: Colors.green,
+                  ),
+                ),
+                ),
               ),
-              RaisedButton(
+              Container(
+                height: 44,
+                child: FlatButton(
                 color: Colors.green,
-                elevation: 0,
                 child: Text("Salvar", style: TextStyle(color: Colors.white)),
                 onPressed: () {
-                  //novoPaciente();
+                  _addPaciente();
                 },
-              )
+              ),
+              ),
             ],
           ),
           decoration: const BoxDecoration(
@@ -400,7 +304,7 @@ class _HomeState extends State<Home> {
         Expanded(
           child: ListView.builder(
             shrinkWrap: true,
-            itemCount: _toDolist.length,
+            itemCount: _pacienteList.length,
             itemBuilder: (context, index) {
               int item = index;
               return Container(
@@ -408,16 +312,17 @@ class _HomeState extends State<Home> {
                   leading: CircleAvatar(
                     backgroundColor: Colors.green,
                     child: Text(
-                      _toDolist[index].substring(0, 2),
+                      _pacienteList[index] ['title'].substring(0,2),
                       style: TextStyle(fontSize: 20.0, color: Colors.white),
                     ),
                   ),
-                  title: Text(_toDolist[index].toString(),
+                  title: Text(
+                      _pacienteList[index] ['title'].toString(),
                       style: TextStyle(
                           color: Colors.grey[600],
                           fontWeight: FontWeight.bold)),
                   subtitle: Text(
-                    _toDolistHosp[index].toString(),
+                    _pacienteList[index] ['data'].toString(),
                     style: TextStyle(color: Colors.grey[500]),
                   ),
                 ),
@@ -435,7 +340,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<File> _saveData(banco) async {
-    String data = json.encode(_toDolist);
+    String data = json.encode(_pacienteList);
     final file = await _getFile(banco);
     return file.writeAsString(data);
   }
