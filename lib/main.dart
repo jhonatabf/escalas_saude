@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io' as prefix1;
 import 'dart:io';
 
 import 'package:escalas_saude/cadastros/pacientes.dart';
@@ -8,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import './escalas/braden.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:date_format/date_format.dart';
 
 String tituloApp = "Minhas escalas";
 String sloganApp = "Sua solução para verificar a condição do paciente";
@@ -64,12 +64,23 @@ class _HomeState extends State<Home> {
   final _pacienteController = TextEditingController();
   List _pacienteList = [];
 
+  @override
+  void initState(){
+    super.initState();
+    _readData("pacientes").then((data){
+      setState(() {
+        _pacienteList = json.decode(data);
+      });
+    });
+  }
+
   void _addPaciente(){
     setState((){
       Map<String, dynamic> newPaciente = Map();
       newPaciente["title"] = _pacienteController.text;
       _pacienteController.text = "";
-      newPaciente["data"] = "Cadastrado em: " + new DateTime.now().toString();
+      final dataFormatada = formatDate(new DateTime.now(),[dd, '/', mm, '/', yyyy, ' ', HH, ':', nn]);
+      newPaciente["data"] = "Cadastrado em: " + dataFormatada;
       _pacienteList.add(newPaciente);
     });
   }
@@ -279,6 +290,7 @@ class _HomeState extends State<Home> {
                 child: Text("Salvar", style: TextStyle(color: Colors.white)),
                 onPressed: () {
                   _addPaciente();
+                  _saveData("pacientes");
                 },
               ),
               ),
@@ -336,7 +348,13 @@ class _HomeState extends State<Home> {
 
   Future<File> _getFile(banco) async {
     final diretorioDb = await getApplicationDocumentsDirectory();
-    return File("${diretorioDb}" + banco + ".json");
+    final arquivo = '${diretorioDb.path}/$banco.json';
+    File file = new File(arquivo);
+    var fileExist = await file.exists();
+    if (fileExist = false) {
+      file.writeAsString("");
+    }
+    return file;
   }
 
   Future<File> _saveData(banco) async {

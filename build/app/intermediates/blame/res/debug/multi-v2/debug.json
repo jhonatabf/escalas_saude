@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\jhona\\flutter\\workspace\\escalas_saude\\build\\app\\intermediates\\res\\merged\\debug\\values_values.arsc.flat",
+            "outputFile": "C:\\Users\\jhonata.reboucas.HSD\\flutter\\workspace\\escalas_saude\\build\\app\\intermediates\\res\\merged\\debug\\values_values.arsc.flat",
             "map": [
                 {
-                    "source": "C:\\Users\\jhona\\flutter\\workspace\\escalas_saude\\android\\app\\src\\main\\res\\values\\styles.xml",
+                    "source": "C:\\Users\\jhonata.reboucas.HSD\\flutter\\workspace\\escalas_saude\\android\\app\\src\\main\\res\\values\\styles.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
