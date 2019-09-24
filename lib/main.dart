@@ -65,21 +65,22 @@ class _HomeState extends State<Home> {
   List _pacienteList = [];
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    _readData("pacientes").then((data){
+    _readData("pacientes").then((data) {
       setState(() {
         _pacienteList = json.decode(data);
       });
     });
   }
 
-  void _addPaciente(){
-    setState((){
+  void _addPaciente() {
+    setState(() {
       Map<String, dynamic> newPaciente = Map();
       newPaciente["title"] = _pacienteController.text;
       _pacienteController.text = "";
-      final dataFormatada = formatDate(new DateTime.now(),[dd, '/', mm, '/', yyyy, ' ', HH, ':', nn]);
+      final dataFormatada = formatDate(
+          new DateTime.now(), [dd, '/', mm, '/', yyyy, ' ', HH, ':', nn]);
       newPaciente["data"] = "Cadastrado em: " + dataFormatada;
       _pacienteList.add(newPaciente);
     });
@@ -275,24 +276,24 @@ class _HomeState extends State<Home> {
                   height: 50,
                   child: TextField(
                     controller: _pacienteController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Nome',
-                    focusColor: Colors.green,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Nome',
+                      focusColor: Colors.green,
+                    ),
                   ),
-                ),
                 ),
               ),
               Container(
                 height: 44,
                 child: FlatButton(
-                color: Colors.green,
-                child: Text("Salvar", style: TextStyle(color: Colors.white)),
-                onPressed: () {
-                  _addPaciente();
-                  _saveData("pacientes");
-                },
-              ),
+                  color: Colors.green,
+                  child: Text("Salvar", style: TextStyle(color: Colors.white)),
+                  onPressed: () {
+                    _addPaciente();
+                    _saveData("pacientes");
+                  },
+                ),
               ),
             ],
           ),
@@ -324,19 +325,27 @@ class _HomeState extends State<Home> {
                   leading: CircleAvatar(
                     backgroundColor: Colors.green,
                     child: Text(
-                      _pacienteList[index] ['title'].substring(0,2),
+                      _pacienteList[index]['title'].substring(0, 2),
                       style: TextStyle(fontSize: 20.0, color: Colors.white),
                     ),
                   ),
-                  title: Text(
-                      _pacienteList[index] ['title'].toString(),
+                  title: Text(_pacienteList[index]['title'].toString(),
                       style: TextStyle(
                           color: Colors.grey[600],
                           fontWeight: FontWeight.bold)),
                   subtitle: Text(
-                    _pacienteList[index] ['data'].toString(),
+                    _pacienteList[index]['data'].toString(),
                     style: TextStyle(color: Colors.grey[500]),
                   ),
+                  trailing:
+                      IconButton(
+                          icon: Icon(Icons.more_vert),
+                          onPressed: () {
+                            setState(() {
+                              popupMenuButton();
+                              print("pressionado");
+                            });
+                          }),
                 ),
               );
             },
@@ -344,6 +353,16 @@ class _HomeState extends State<Home> {
         ),
       ],
     );
+  }
+
+  Widget popupMenuButton() {
+    PopupMenuButton<String>(
+      icon: Icon(Icons.verified_user),
+      itemBuilder: (BuildContext context){
+      },
+
+    );
+    return PopupMenuButton();
   }
 
   Future<File> _getFile(banco) async {
