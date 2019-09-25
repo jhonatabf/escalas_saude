@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:escalas_saude/cadastros/pacientes.dart';
-import 'package:escalas_saude/escalas/braden.dart' as prefix0;
+import 'package:escalas_saude/escalas/braden.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import './escalas/braden.dart';
@@ -23,20 +23,6 @@ String tituloPagina = "Minhas Escalas";
 
 const TextStyle optionStyle =
     TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-const List<Widget> _widgetOptions = <Widget>[
-  Text(
-    'Index 0: Escalas',
-    style: optionStyle,
-  ),
-  Text(
-    'Index 1: Hospitais',
-    style: optionStyle,
-  ),
-  Text(
-    'Index 2: Pacientes',
-    style: optionStyle,
-  ),
-];
 
 void main() {
   SystemChrome.setPreferredOrientations(
@@ -52,6 +38,18 @@ void main() {
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
+}
+
+class MenuPacientes {
+  static const String nova = 'Avaliar';
+  static const String editar = 'Editar';
+  static const String apagar = 'Apagar';
+
+  static const List<String> escolhas = <String>[
+    nova,
+    editar,
+    apagar,
+  ];
 }
 
 class _HomeState extends State<Home> {
@@ -77,12 +75,14 @@ class _HomeState extends State<Home> {
   void _addPaciente() {
     setState(() {
       Map<String, dynamic> newPaciente = Map();
-      newPaciente["title"] = _pacienteController.text;
-      _pacienteController.text = "";
-      final dataFormatada = formatDate(
-          new DateTime.now(), [dd, '/', mm, '/', yyyy, ' ', HH, ':', nn]);
-      newPaciente["data"] = "Cadastrado em: " + dataFormatada;
-      _pacienteList.add(newPaciente);
+      if (_pacienteController.text != "") {
+        newPaciente["title"] = _pacienteController.text;
+        _pacienteController.text = "";
+        final dataFormatada = formatDate(
+            new DateTime.now(), [dd, '/', mm, '/', yyyy, ' ', HH, ':', nn]);
+        newPaciente["data"] = "Cadastrado em: " + dataFormatada;
+        _pacienteList.add(newPaciente);
+      }
     });
   }
 
@@ -154,12 +154,12 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            title: Text('Escalas'),
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.perm_contact_calendar),
             title: Text('Pacientes'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            title: Text('Escalas'),
           ),
         ],
         currentIndex: _selectedIndex,
@@ -170,11 +170,11 @@ class _HomeState extends State<Home> {
             _selectedIndex = index;
             switch (_selectedIndex) {
               case 0:
-                tituloPagina = "Minhas Escalas";
+                tituloPagina = "Meus Pacientes";
                 paginas(_selectedIndex);
                 break;
               case 1:
-                tituloPagina = "Meus Pacientes";
+                tituloPagina = "Minhas Escalas";
                 paginas(_selectedIndex);
                 break;
             }
@@ -188,10 +188,10 @@ class _HomeState extends State<Home> {
     Widget home;
     switch (index) {
       case 0:
-        home = base();
+        home = paciente();
         break;
       case 1:
-        home = paciente();
+        home = base();
         break;
     }
     return home;
@@ -319,6 +319,7 @@ class _HomeState extends State<Home> {
             shrinkWrap: true,
             itemCount: _pacienteList.length,
             itemBuilder: (context, index) {
+              
               int item = index;
               return Container(
                 child: ListTile(
@@ -337,15 +338,12 @@ class _HomeState extends State<Home> {
                     _pacienteList[index]['data'].toString(),
                     style: TextStyle(color: Colors.grey[500]),
                   ),
-                  trailing:
-                      IconButton(
-                          icon: Icon(Icons.more_vert),
-                          onPressed: () {
-                            setState(() {
-                              popupMenuButton();
-                              print("pressionado");
-                            });
-                          }),
+                  trailing: IconButton(
+                      icon: Icon(Icons.more_vert),
+                      onPressed: () {
+                              print("ola");
+                              _MenuPaciente();
+                      }),
                 ),
               );
             },
@@ -355,14 +353,39 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget popupMenuButton() {
-    PopupMenuButton<String>(
-      icon: Icon(Icons.verified_user),
-      itemBuilder: (BuildContext context){
-      },
+  _MenuPaciente() async{
+    await showMenu(
+      context: context,
+      position: RelativeRect.fill,
+      items: MenuPacientes.escolhas.map((String escolha) {
+          return PopupMenuItem<String>(
+            value: escolha,
+            child: Text(escolha.toString()),
+          );
+        }).toList(),
 
+      elevation: 8.0,
     );
-    return PopupMenuButton();
+  }
+
+
+  Widget menuPaciente() {
+      return new PopupMenuButton<String>(
+      onSelected: acaoMenuPaciente,
+      itemBuilder: (BuildContext context) {
+        print("oi");
+        return MenuPacientes.escolhas.map((String escolha) {
+          return PopupMenuItem<String>(
+            value: escolha,
+            child: Text(escolha.toString()),
+          );
+        }).toList();
+      },
+    );
+  }
+
+  void acaoMenuPaciente(String selecao) {
+    print("Teste");
   }
 
   Future<File> _getFile(banco) async {
